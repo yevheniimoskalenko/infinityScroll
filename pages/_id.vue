@@ -1,7 +1,13 @@
 <template>
   <div>
     <el-row>
-      <el-col> {{ tickets }}</el-col>
+      <el-col>
+        <div class="tickets">
+          <div v-for="(ticket, index) in tickets" :key="index" class="ticket">
+            {{ ticket }}
+          </div>
+        </div>
+      </el-col>
     </el-row>
   </div>
 </template>

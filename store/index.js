@@ -10,8 +10,8 @@ export const mutations = {
 export const actions = {
   async tickets({ commit }, payload) {
     try {
-      /*  eslint-disable no-console */
-     return await 
+      /* eslint-disable no-console */
+      return await this.$axios.$get(`/api/pagination/${payload.id}`)
     } catch (e) {}
   }
 }
