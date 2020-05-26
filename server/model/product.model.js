@@ -26,4 +26,4 @@ const product = new Schema({
     default: false
   }
 })
-module.exports = model('product', product)
+module.exports = model('catalog', product)

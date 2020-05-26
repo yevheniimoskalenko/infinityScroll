@@ -3,7 +3,7 @@ const { Schema, model } = require('mongoose')
 const tickets = new Schema({
   id_catalog: {
     type: Schema.Types.ObjectId,
-    ref: 'product'
+    ref: 'catalog'
   },
   id_user: {
     type: Schema.Types.ObjectId,
@@ -22,4 +22,4 @@ const tickets = new Schema({
     default: false
   }
 })
-module.exports = model('tickets', tickets)
+module.exports = model('tikets', tickets)
