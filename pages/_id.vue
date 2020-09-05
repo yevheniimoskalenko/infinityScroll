@@ -1,6 +1,7 @@
 <template>
   <div v-loading="loading" class="page">
-    <div>
+    <div class="list">
+      <h2>Hérissonne</h2>
       <div v-for="(image, index) in images" :key="index" class="image">
         <el-card> <el-image :src="image.webformatURL"/></el-card>
       </div>
@@ -47,6 +48,9 @@ export default {
         this.loading = false
       }
     }
+  },
+  head: {
+    title: 'Hérissonne'
   }
 }
 </script>
@@ -60,6 +64,11 @@ export default {
   }
   .input__inner:focus {
     border: none;
+  }
+}
+.list {
+  h2 {
+    text-align: center;
   }
 }
 </style>
