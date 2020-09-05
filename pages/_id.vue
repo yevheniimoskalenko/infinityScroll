@@ -1,7 +1,7 @@
 <template>
   <div v-loading="loading" class="page">
     <div class="list">
-      <h2>Hérissonne</h2>
+      <h2>{{ data.q }}</h2>
       <div v-for="(image, index) in images" :key="index" class="image">
         <el-card> <el-image :src="image.webformatURL"/></el-card>
       </div>
@@ -16,7 +16,10 @@ export default {
     return {
       page: 1,
       loading: true,
-      images: []
+      images: [],
+      data: {
+        q: 'Hedgehog'
+      }
     }
   },
   mounted() {
@@ -35,6 +38,7 @@ export default {
     }
     window.addEventListener('scroll', eventHandler)
   },
+
   methods: {
     async fetch(page = 0) {
       try {
@@ -67,6 +71,9 @@ export default {
   }
 }
 .list {
+  .form-query {
+    padding: 20px;
+  }
   h2 {
     text-align: center;
   }
