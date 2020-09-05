@@ -3,7 +3,13 @@
     <div class="list">
       <h2>{{ data.q }}</h2>
       <div v-for="(image, index) in images" :key="index" class="image">
-        <el-card> <el-image :src="image.webformatURL"/></el-card>
+        <el-card>
+          <el-image :src="image.webformatURL" lazy>
+            <div slot="placeholder" class="image-slot">
+              Loading<span class="dot">...</span>
+            </div></el-image
+          ></el-card
+        >
       </div>
     </div>
   </div>
@@ -18,7 +24,7 @@ export default {
       loading: true,
       images: [],
       data: {
-        q: 'Hedgehog'
+        q: 'Hérissonne'
       }
     }
   },
@@ -59,6 +65,13 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+.image-slot {
+  width: 517px;
+  height: 345px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .image {
   margin: 20px;
 }
