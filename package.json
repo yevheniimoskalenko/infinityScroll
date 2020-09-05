@@ -14,9 +14,11 @@
   },
   "dependencies": {
     "@nuxtjs/axios": "^5.3.6",
+    "axios": "^0.20.0",
     "cross-env": "^5.2.0",
     "element-ui": "^2.4.11",
     "express": "^4.16.4",
+    "lodash": "^4.17.20",
     "mongoose": "^5.9.16",
     "normalize.css": "^8.0.1",
     "nuxt": "^2.0.0"

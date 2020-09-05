@@ -1,34 +1,48 @@
 <template>
-  <div>
-    <el-card class="box-card">
-      <div v-infinite-scroll="load" style="overflow:auto" class="tickets">
-        <div v-for="(ticket, index) in tickets" :key="index" class="ticket">
-          {{ ticket.number_tikets }}
-        </div>
+  <div v-loading="loading" class="page">
+    <div>
+      <div v-for="(image, index) in images" :key="index" class="image">
+        <el-card> <el-image :src="image.webformatURL"/></el-card>
       </div>
-    </el-card>
+    </div>
   </div>
 </template>
 
 <script>
+import _ from 'lodash'
 export default {
-  async asyncData({ store, params }) {
-    const tickets = await store.dispatch('tickets', params)
-    return { tickets }
-  },
   data() {
     return {
-      loading: true
+      page: 1,
+      loading: true,
+      images: []
     }
   },
+  mounted() {
+    this.fetch()
+    const eventHandler = () => {
+      const scrollTop = document.documentElement.scrollTop
+      const viewPortHeight = window.innerHeight
+
+      const totalHeight = document.documentElement.offsetHeight
+      const atTheBottom = scrollTop + viewPortHeight === totalHeight
+
+      if (atTheBottom) {
+        this.fetch(this.page)
+      }
+      const deleyHendler = _.debounce(eventHandler, 400)
+    }
+    window.addEventListener('scroll', eventHandler)
+  },
   methods: {
-    async load() {
-      /* eslint-disable no-console */
+    async fetch(page = 0) {
       try {
         this.loading = true
-        const load = await this.$store.dispatch('load', this.$route.params)
-        this.tickets = this.tickets.concat(load)
+        const data = await this.$store.dispatch('loadPage', page)
+        this.images = await this.images.concat(data.hits)
+        this.page++
       } catch (e) {
+        console.log(e)
       } finally {
         this.loading = false
       }
@@ -37,7 +51,15 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-infinite-list-wrapper {
-  height: 500px;
+.image {
+  margin: 20px;
+}
+.el-input {
+  .el-input__inner {
+    border: none;
+  }
+  .input__inner:focus {
+    border: none;
+  }
 }
 </style>

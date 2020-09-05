@@ -8,19 +8,10 @@ export const mutations = {
   }
 }
 export const actions = {
-  async tickets({ commit }, payload) {
+  async loadPage({ commit }, payload) {
     try {
-      return await this.$axios.$get(`/api/pagination/${payload.id}`)
-    } catch (e) {
-      commit('setError', e)
-    }
-  },
-
-  async load({ commit }, payload) {
-    try {
-      return await this.$axios.$get(`/api/load/${payload.id}`)
-    } catch (e) {
-      commit('setError', e)
-    }
+      payload++
+      return await this.$axios.$get(`/api/pagination/${payload}`)
+    } catch (e) {}
   }
 }
