@@ -1,5 +1,5 @@
 <template>
-  <div v-loading="loading" class="page">
+  <div class="page">
     <div class="list">
       <h2>{{ data.q }}</h2>
       <div v-for="(image, index) in images" :key="index" class="image">
@@ -21,7 +21,6 @@ export default {
   data() {
     return {
       page: 1,
-      loading: true,
       images: [],
       data: {
         q: 'Hérissonne'
@@ -48,14 +47,12 @@ export default {
   methods: {
     async fetch(page = 0) {
       try {
-        this.loading = true
         const data = await this.$store.dispatch('loadPage', page)
         this.images = await this.images.concat(data.hits)
         this.page++
       } catch (e) {
         console.log(e)
       } finally {
-        this.loading = false
       }
     }
   },
