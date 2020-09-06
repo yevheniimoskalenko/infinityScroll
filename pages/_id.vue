@@ -2,14 +2,43 @@
   <div class="page">
     <div class="list">
       <h2>{{ data.q }}</h2>
-      <div v-for="(image, index) in images" :key="index" class="image">
+      <div class="form-search">
+        <el-card>
+          <el-form ref="form" :model="data" :rules="rules">
+            <el-row :gutter="10">
+              <el-col :span="20" :sm="20" :md="20" :xs="20" :lg="20">
+                <el-form-item prop="q">
+                  <el-input
+                    v-model="data.q"
+                    placeholder="Search"
+                    @input.native="search($event)"
+                  ></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :sm="4" :md="4" :xs="4" :lg="4">
+                <el-form-item>
+                  <el-select
+                    v-model="data.lang"
+                    placeholder="Select"
+                    @change="search($event)"
+                  >
+                    <el-option label="fr" value="fr"></el-option>
+                    <el-option label="en" value="en"></el-option>
+                  </el-select> </el-form-item
+              ></el-col>
+            </el-row>
+          </el-form>
+        </el-card>
+      </div>
+      <div v-for="image in images" :key="image.id" class="image">
         <el-card>
           <el-image :src="image.webformatURL" lazy>
             <div slot="placeholder" class="image-slot">
-              Loading<span class="dot">...</span>
-            </div></el-image
-          ></el-card
-        >
+              Loading
+              <span class="dot">...</span>
+            </div>
+          </el-image>
+        </el-card>
       </div>
     </div>
   </div>
@@ -23,7 +52,11 @@ export default {
       page: 1,
       images: [],
       data: {
-        q: 'Hérissonne'
+        q: 'Hedgehog',
+        lang: 'en'
+      },
+      rules: {
+        q: [{ required: true }, { min: 3 }]
       }
     }
   },
@@ -39,17 +72,39 @@ export default {
       if (atTheBottom) {
         this.fetch(this.page)
       }
-      const deleyHendler = _.debounce(eventHandler, 400)
     }
-    window.addEventListener('scroll', eventHandler)
+    // window.addEventListener('scroll', eventHandler)
   },
 
   methods: {
+    search(event) {
+      console.log(event)
+      this.$refs.form.validate((valid) => {
+        if (valid) {
+          _.debounce(async () => {
+            const formData = {
+              page: this.page,
+              input: this.data.q,
+              lang: this.data.lang
+            }
+            const data = await this.$store.dispatch('loadPage', formData)
+            this.images = data.hits
+            this.page = 1
+          }, 700)()
+        }
+      })
+    },
     async fetch(page = 0) {
       try {
-        const data = await this.$store.dispatch('loadPage', page)
+        const formData = {
+          page: this.page,
+          input: this.data.q || 'Hedgehog',
+          lang: this.data.lang || 'en'
+        }
+        const data = await this.$store.dispatch('loadPage', formData)
         this.images = await this.images.concat(data.hits)
         this.page++
+        console.log(data)
       } catch (e) {
         console.log(e)
       } finally {
@@ -69,7 +124,8 @@ export default {
   justify-content: center;
   align-items: center;
 }
-.image {
+.image,
+.form-search {
   margin: 20px;
 }
 .el-input {

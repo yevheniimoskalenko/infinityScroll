@@ -10,8 +10,9 @@ export const mutations = {
 export const actions = {
   async loadPage({ commit }, payload) {
     try {
-      payload++
-      return await this.$axios.$get(`/api/pagination/${payload}`)
+      return await this.$axios.$get(
+        `/api/pagination/${payload.page}/${payload.input}/${payload.lang}`
+      )
     } catch (e) {}
   }
 }
