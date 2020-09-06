@@ -73,7 +73,7 @@ export default {
         this.fetch(this.page)
       }
     }
-    // window.addEventListener('scroll', eventHandler)
+    window.addEventListener('scroll', eventHandler)
   },
 
   methods: {
@@ -90,6 +90,12 @@ export default {
             const data = await this.$store.dispatch('loadPage', formData)
             this.images = data.hits
             this.page = 1
+            if (data.total === 0) {
+              this.$message({
+                message: 'is not found',
+                type: 'error'
+              })
+            }
           }, 700)()
         }
       })
@@ -104,15 +110,22 @@ export default {
         const data = await this.$store.dispatch('loadPage', formData)
         this.images = await this.images.concat(data.hits)
         this.page++
-        console.log(data)
+        if (data.total === 0) {
+          this.$message({
+            message: 'is not found',
+            type: 'error'
+          })
+        }
       } catch (e) {
         console.log(e)
       } finally {
       }
     }
   },
-  head: {
-    title: 'Hérissonne'
+  head() {
+    return {
+      title: `${this.data.q}`
+    }
   }
 }
 </script>
@@ -124,9 +137,11 @@ export default {
   justify-content: center;
   align-items: center;
 }
-.image,
+.image {
+  margin: 20px 0;
+}
 .form-search {
-  margin: 20px;
+  margin: 20px 0;
 }
 .el-input {
   .el-input__inner {
@@ -137,9 +152,6 @@ export default {
   }
 }
 .list {
-  .form-query {
-    padding: 20px;
-  }
   h2 {
     text-align: center;
   }
