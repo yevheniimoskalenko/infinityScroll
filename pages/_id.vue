@@ -24,8 +24,9 @@
                   >
                     <el-option label="fr" value="fr"></el-option>
                     <el-option label="en" value="en"></el-option>
-                  </el-select> </el-form-item
-              ></el-col>
+                  </el-select>
+                </el-form-item>
+              </el-col>
             </el-row>
           </el-form>
         </el-card>
@@ -78,7 +79,6 @@ export default {
 
   methods: {
     search(event) {
-      console.log(event)
       this.$refs.form.validate((valid) => {
         if (valid) {
           _.debounce(async () => {
