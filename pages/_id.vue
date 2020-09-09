@@ -10,8 +10,9 @@
                 <el-form-item prop="q">
                   <el-input
                     v-model="data.q"
+                    v-loading.fullscreen.lock="fullscreenLoading"
                     placeholder="Search"
-                    @input.native="search($event)"
+                    @keyup.native.enter="onSearch($event)"
                   ></el-input>
                 </el-form-item>
               </el-col>
@@ -20,7 +21,7 @@
                   <el-select
                     v-model="data.lang"
                     placeholder="Select"
-                    @change="search($event)"
+                    @input.native.enter="onSearch($event)"
                   >
                     <el-option label="fr" value="fr"></el-option>
                     <el-option label="en" value="en"></el-option>
@@ -31,7 +32,7 @@
           </el-form>
         </el-card>
       </div>
-      <div v-for="image in images" :key="image.id" class="image">
+      <div v-for="(image, index) in images" :key="index" class="image">
         <el-card>
           <el-image :src="image.webformatURL" lazy>
             <div slot="placeholder" class="image-slot">
@@ -50,8 +51,9 @@ import _ from 'lodash'
 export default {
   data() {
     return {
-      page: 1,
+      page: 1 || 1,
       images: [],
+      fullscreenLoading: false,
       data: {
         q: 'Hedgehog',
         lang: 'en'
@@ -62,7 +64,7 @@ export default {
     }
   },
   mounted() {
-    this.fetch()
+    this.fetch(this.page)
     const eventHandler = () => {
       const scrollTop = document.documentElement.scrollTop
       const viewPortHeight = window.innerHeight
@@ -78,32 +80,41 @@ export default {
   },
 
   methods: {
-    search(event) {
+    onSearch(event) {
       this.$refs.form.validate((valid) => {
         if (valid) {
+          this.fullscreenLoading = true
           _.debounce(async () => {
-            const formData = {
-              page: this.page,
-              input: this.data.q,
-              lang: this.data.lang
-            }
-            const data = await this.$store.dispatch('loadPage', formData)
-            this.images = data.hits
-            this.page = 1
-            if (data.total === 0) {
-              this.$message({
-                message: 'is not found',
-                type: 'error'
-              })
+            try {
+              const formData = {
+                page: 1,
+                input: this.data.q,
+                lang: this.data.lang
+              }
+              const data = await this.$store.dispatch('loadPage', formData)
+              this.images = data.hits
+
+              this.fullscreenLoading = false
+              if (data.total === 0) {
+                this.$message({
+                  message: 'is not found',
+                  type: 'error'
+                })
+              }
+            } catch (e) {
+            } finally {
+              this.fullscreenLoading = false
             }
           }, 700)()
         }
       })
     },
-    async fetch(page = 0) {
+    async fetch(page = 1) {
       try {
+        this.fullscreenLoading = true
+
         const formData = {
-          page: this.page,
+          page,
           input: this.data.q || 'Hedgehog',
           lang: this.data.lang || 'en'
         }
@@ -119,6 +130,7 @@ export default {
       } catch (e) {
         console.log(e)
       } finally {
+        this.fullscreenLoading = false
       }
     }
   },
