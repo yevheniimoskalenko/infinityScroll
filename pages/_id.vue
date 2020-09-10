@@ -51,7 +51,7 @@ import _ from 'lodash'
 export default {
   data() {
     return {
-      page: 1 || 1,
+      page: 1,
       images: [],
       fullscreenLoading: false,
       data: {
@@ -64,7 +64,6 @@ export default {
     }
   },
   mounted() {
-    this.fetch(this.page)
     const eventHandler = () => {
       const scrollTop = document.documentElement.scrollTop
       const viewPortHeight = window.innerHeight
@@ -73,10 +72,14 @@ export default {
       const atTheBottom = scrollTop + viewPortHeight === totalHeight
 
       if (atTheBottom) {
-        this.fetch(this.page)
+        this.fetch()
       }
     }
-    window.addEventListener('scroll', eventHandler)
+
+    const deleyHendler = _.debounce(eventHandler, 400)
+    window.addEventListener('scroll', deleyHendler)
+
+    this.fetch()
   },
 
   methods: {
@@ -93,7 +96,7 @@ export default {
               }
               const data = await this.$store.dispatch('loadPage', formData)
               this.images = data.hits
-
+              this.page = 2
               this.fullscreenLoading = false
               if (data.total === 0) {
                 this.$message({
@@ -109,12 +112,12 @@ export default {
         }
       })
     },
-    async fetch(page = 1) {
+    async fetch() {
       try {
         this.fullscreenLoading = true
 
         const formData = {
-          page,
+          page: this.page,
           input: this.data.q || 'Hedgehog',
           lang: this.data.lang || 'en'
         }
